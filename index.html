@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Platform Edukasi Inklusif</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600&family=Outfit:wght@300;400;700&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Skip Link for Accessibility -->
+    <a href="#main-content" class="skip-link">Langsung ke konten utama</a>
+
+    <!-- Accessibility & Settings Toolbar -->
+    <nav class="setup-bar" aria-label="Pengaturan Aksesibilitas">
+        <div class="logo">
+            <span class="icon">✨</span> InklusiBelajar
+        </div>
+        <div class="controls">
+            <button id="btn-sound" class="icon-btn" aria-label="Matikan Suara" aria-pressed="false">
+                🔊
+            </button>
+            <button id="btn-settings" class="icon-btn" aria-label="Pengaturan Tampilan" aria-expanded="false">
+                ⚙️
+            </button>
+        </div>
+    </nav>
+
+    <div id="settings-panel" class="settings-panel hidden" aria-hidden="true" role="dialog" aria-modal="true"
+        aria-labelledby="settings-title">
+        <h2 id="settings-title">Pengaturan Aksesibilitas</h2>
+        <div class="setting-group">
+            <label for="font-size-range">Ukuran Teks</label>
+            <input type="range" id="font-size-range" min="1" max="3" step="0.5" value="1">
+        </div>
+        <div class="setting-group">
+            <label>Kontras Warna</label>
+            <div class="theme-buttons">
+                <button class="theme-btn default" data-theme="default" aria-label="Tema Standar">A</button>
+                <button class="theme-btn high-contrast" data-theme="high-contrast"
+                    aria-label="Kontras Tinggi">A</button>
+                <button class="theme-btn dark" data-theme="dark" aria-label="Mode Gelap">A</button>
+            </div>
+        </div>
+        <button id="close-settings" class="primary-btn">Tutup</button>
+    </div>
+
+    <!-- Main Content Area -->
+    <main id="main-content">
+
+        <!-- SECTION 1: Landing Page / Mode Selection (2x2 Grid) -->
+        <section id="landing-section" class="active-section space-y">
+            <div class="hero-text text-center">
+                <h1>Platform Edukasi <span class="highlight">Inklusif</span></h1>
+                <p>Pilih mode belajar yang sesuai denganmu:</p>
+            </div>
+
+            <div class="mode-grid-2x2" role="list">
+                <!-- Mode Tunarungu -->
+                <button class="mode-card" data-mode="tunarungu" onclick="app.selectMode('tunarungu')">
+                    <div class="card-icon">👁️</div>
+                    <div class="card-text">
+                        <h3>Tunarungu</h3>
+                        <p>Visual & Teks</p>
+                    </div>
+                </button>
+
+                <!-- Mode Tunanetra -->
+                <button class="mode-card" data-mode="tunanetra" onclick="app.selectMode('tunanetra')">
+                    <div class="card-icon">👂</div>
+                    <div class="card-text">
+                        <h3>Tunanetra</h3>
+                        <p>Audio & Keyboard</p>
+                    </div>
+                </button>
+
+                <!-- Mode Tunagrahita -->
+                <button class="mode-card" data-mode="tunagrahita" onclick="app.selectMode('tunagrahita')">
+                    <div class="card-icon">🍎</div>
+                    <div class="card-text">
+                        <h3>Tunagrahita</h3>
+                        <p>Sederhana & Santai</p>
+                    </div>
+                </button>
+
+                <!-- Mode ADHD/Autisme -->
+                <button class="mode-card" data-mode="adhd" onclick="app.selectMode('adhd')">
+                    <div class="card-icon">🎯</div>
+                    <div class="card-text">
+                        <h3>Fokus (ADHD)</h3>
+                        <p>Tenang & Jelas</p>
+                    </div>
+                </button>
+            </div>
+        </section>
+
+        <!-- SECTION 2: Age Selection -->
+        <section id="age-selection" class="hidden-section space-y text-center">
+            <button class="back-btn" onclick="app.goHome()" aria-label="Kembali ke pemilihan mode">⬅ Kembali</button>
+
+            <h2 id="age-title-display">Pilih Kategori Usia</h2>
+            <div class="selection-container">
+                <button class="select-btn" onclick="app.selectAge('6-8')">
+                    <span class="btn-main">6 - 8</span>
+                    <span class="btn-sub">Tahun</span>
+                </button>
+                <button class="select-btn" onclick="app.selectAge('9-12')">
+                    <span class="btn-main">9 - 12</span>
+                    <span class="btn-sub">Tahun</span>
+                </button>
+                <button class="select-btn" onclick="app.selectAge('13-15')">
+                    <span class="btn-main">13 - 15</span>
+                    <span class="btn-sub">Tahun</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- SECTION 3: Package Selection -->
+        <section id="package-selection" class="hidden-section space-y text-center">
+            <button class="back-btn" onclick="app.goBackToAge()" aria-label="Kembali ke pemilihan usia">⬅
+                Kembali</button>
+
+            <h2>Pilih Paket Soal</h2>
+            <div class="selection-container">
+                <button class="select-btn package" onclick="app.selectPackage('A')">
+                    <span class="btn-main">Paket A</span>
+                </button>
+                <button class="select-btn package" onclick="app.selectPackage('B')">
+                    <span class="btn-main">Paket B</span>
+                </button>
+                <button class="select-btn package" onclick="app.selectPackage('C')">
+                    <span class="btn-main">Paket C</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- SECTION 4: Quiz Interface -->
+        <section id="quiz-interface" class="hidden-section">
+            <div class="quiz-header">
+                <button class="icon-btn small" onclick="app.exitQuiz()" aria-label="Keluar Latihan">❌</button>
+                <div class="progress-bar-container" aria-hidden="true">
+                    <div id="progress-fill" class="progress-fill" style="width: 0%"></div>
+                </div>
+                <div class="score-badge" aria-live="polite">
+                    ⭐ <span id="score-display">0</span>
+                </div>
+            </div>
+
+            <div class="quiz-content text-center">
+                <div id="question-container" aria-live="assertive">
+                    <h2 id="question-text">Pertanyaan...</h2>
+                </div>
+
+                <div id="options-container" class="options-grid">
+                    <!-- Options injected by JS -->
+                </div>
+
+                <div id="feedback-area" class="feedback-area hidden" aria-live="assertive">
+                    <p id="feedback-text"></p>
+                    <button id="next-btn" class="primary-btn" onclick="app.nextQuestion()">Lanjut ➡</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: Results -->
+        <section id="result-section" class="hidden-section text-center">
+            <div class="celebration-anim">🎉</div>
+            <h2>Selesai!</h2>
+            <p id="final-message">Kamu hebat!</p>
+            <div class="final-score">
+                Total Skor: <span id="final-score-val">0</span>
+            </div>
+
+            <div class="result-details" id="result-details">
+                <!-- Details injected optionally -->
+            </div>
+
+            <div class="action-buttons">
+                <button class="primary-btn" onclick="app.restartPackage()">Ulangi Paket Ini 🔄</button>
+                <button class="secondary-btn" onclick="app.goHome()">Ganti Mode 🏠</button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Global Audio Elements -->
+    <audio id="sfx-correct" src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3"
+        preload="auto"></audio>
+    <audio id="sfx-wrong" src="https://assets.mixkit.co/active_storage/sfx/2572/2572-preview.mp3"
+        preload="auto"></audio>
+    <audio id="sfx-success" src="https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3"
+        preload="auto"></audio>
+
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
