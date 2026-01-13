@@ -18,12 +18,12 @@
 <body>
 
     <!-- Skip Link for Accessibility -->
-    <a href="#main-content" class="skip-link">Langsung ke konten utama</a>
+    <a href="#main-content" class="skip-link"></a>
 
     <!-- Accessibility & Settings Toolbar -->
     <nav class="setup-bar" aria-label="Pengaturan Aksesibilitas">
         <div class="logo">
-            <span class="icon">✨</span> InklusiBelajar
+            <span class="icon">✨</span> Web Edukasi Disabilitas
         </div>
         <div class="controls">
             <button id="btn-sound" class="icon-btn" aria-label="Matikan Suara" aria-pressed="false">
@@ -46,9 +46,8 @@
             <label>Kontras Warna</label>
             <div class="theme-buttons">
                 <button class="theme-btn default" data-theme="default" aria-label="Tema Standar">A</button>
-                <button class="theme-btn high-contrast" data-theme="high-contrast"
-                    aria-label="Kontras Tinggi">A</button>
-                <button class="theme-btn dark" data-theme="dark" aria-label="Mode Gelap">A</button>
+                <button class="theme-btn gray" data-theme="gray" aria-label="Mode Abu-Abu">A</button>
+                <button class="theme-btn brown" data-theme="brown" aria-label="Mode Coklat">A</button>
             </div>
         </div>
         <button id="close-settings" class="primary-btn">Tutup</button>
@@ -60,7 +59,10 @@
         <!-- SECTION 1: Landing Page / Mode Selection (2x2 Grid) -->
         <section id="landing-section" class="active-section space-y">
             <div class="hero-text text-center">
-                <h1>Platform Edukasi <span class="highlight">Inklusif</span></h1>
+                <h1 class="welcome-title">Selamat Datang di Platform Edukasi Disabilitas</h1>
+                <p class="desc-text">Belajar menjadi lebih mudah dan menyenangkan.</p>
+                <p class="note-text"><small>(Disarankan dalam pengawasan orang tua atau pendamping)</small></p>
+                <br>
                 <p>Pilih mode belajar yang sesuai denganmu:</p>
             </div>
 
@@ -146,7 +148,8 @@
         <!-- SECTION 4: Quiz Interface -->
         <section id="quiz-interface" class="hidden-section">
             <div class="quiz-header">
-                <button class="icon-btn small" onclick="app.exitQuiz()" aria-label="Keluar Latihan">❌</button>
+                <button class="secondary-btn" style="margin-top:0; padding: 0.5rem 1rem;" onclick="app.exitQuiz()"
+                    aria-label="Kembali ke Menu">⬅ Menu</button>
                 <div class="progress-bar-container" aria-hidden="true">
                     <div id="progress-fill" class="progress-fill" style="width: 0%"></div>
                 </div>
