@@ -229,25 +229,39 @@ const app = {
         // Render Question
         this.elements.display.questionText.textContent = `${this.state.currentQuestionIndex + 1}. ${qData.q}`;
 
+        // Check if question asks about color
+        const isColorQuestion = qData.q.toLowerCase().includes('warna') || qData.q.toLowerCase().includes('warnanya');
+
         // Options Handling
         let optionsWithIndex = qData.options.map((opt, i) => ({ text: opt, originalIndex: i }));
-        // Randomize options for everyone except maybe Tunagrahita if sequence helps? 
-        // User asked for "each time repeated system MUST randomization question AND options".
+        // Randomize options
         this.shuffleArray(optionsWithIndex).forEach((optObj) => {
             const btn = document.createElement('button');
             btn.className = 'option-btn';
-            btn.innerHTML = optObj.text;
+
+            // Logic to remove icons for color questions
+            let displayText = optObj.text;
+            if (isColorQuestion) {
+                // Regex to remove emojis or strictly keep text? 
+                // Assuming emoji + text format like "🟢 Hijau", we remove the emoji.
+                // This regex removes typical emoji ranges and symbols at start
+                displayText = displayText.replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])\s?/g, '');
+            }
+
+            btn.innerHTML = displayText;
             btn.onclick = () => this.checkAnswer(optObj.originalIndex, btn, qData);
             this.elements.display.optionsContainer.appendChild(btn);
         });
 
-        // Mode Specific: Tunanetra (Read Question automatically)
         if (this.state.mode === 'tunanetra' && this.state.audioEnabled) {
             this.stopSpeaking();
             // Read question + options
             let readText = `Pertanyaan nomor ${this.state.currentQuestionIndex + 1}. ${qData.q}. Pilihan jawaban: `;
             optionsWithIndex.forEach((opt, idx) => {
-                readText += `Pilihan ${idx + 1}, ${opt.text}. `;
+                let optText = opt.text;
+                // Strip emojis for reading if needed, but usually TTS handles them or ignores. 
+                // For 'color' questions we strip visual icons but TTS might want color names.
+                readText += `Pilihan ${idx + 1}, ${optText}. `;
             });
             setTimeout(() => this.speak(readText), 500);
         } else if (this.state.audioEnabled && this.state.mode !== 'tunarungu') {
@@ -272,6 +286,9 @@ const app = {
         } else {
             btnElement.classList.add('wrong');
             this.playAudio('wrong');
+            // Add vibration if supported (Mobile/Tablet)
+            if (navigator.vibrate) navigator.vibrate(500); // 500ms vibration
+
             this.showFeedback(false, qData.feedback || "Jawaban kurang tepat.");
         }
 
@@ -284,8 +301,28 @@ const app = {
         const nextBtn = document.getElementById('next-btn');
 
         fbArea.classList.remove('hidden');
-        const prefix = isCorrect ? "🎉 Benar!" : "💪 Kurang tepat.";
-        fbText.textContent = `${prefix} ${text}`;
+
+
+        // Robust cleaning: Remove common prefixes and "itu" to avoid double words
+        let cleanText = text.replace(/^(Betul!|Benar!|Ya,|Maaf,|Salah!)\s*/i, '');
+        cleanText = cleanText.replace(/^itu\s+/i, '');
+
+        // Capitalize first letter
+        if (cleanText.length > 0) {
+            cleanText = cleanText.charAt(0).toUpperCase() + cleanText.slice(1);
+        }
+
+        let fullMessage = "";
+
+        if (isCorrect) {
+            // "Betul! Itu [Content]"
+            fullMessage = `Betul! Itu ${cleanText}`;
+        } else {
+            // "Salah. Jawabannya yaitu [Content]"
+            fullMessage = `Salah. Jawabannya yaitu ${cleanText}`;
+        }
+
+        fbText.textContent = fullMessage;
 
         if (this.state.audioEnabled && this.state.mode !== 'tunarungu') {
             this.speak(fbText.textContent);
@@ -312,6 +349,7 @@ const app = {
         let msg = "Kamu hebat sudah menyelesaikan latihan ini!";
         if (this.state.score === 100) msg = "Sempurna! Kamu menjawab semua dengan benar!";
         else if (this.state.score >= 60) msg = "Bagus sekali! Terus berlatih ya.";
+        else msg = "Jangan menyerah, kamu pasti bisa! Coba lagi ya!"; // Low score encouragement
 
         this.elements.display.finalMessage.textContent = msg;
 
@@ -329,21 +367,38 @@ const app = {
     // --- UTILS ---
     speak(text) {
         if (!this.state.audioEnabled || !window.speechSynthesis) return;
-        const utterance = new SpeechSynthesisUtterance(text);
+        window.speechSynthesis.cancel(); // Stop only speech
+
+        // Math replacement
+        let spokenText = text.replace(/\+/g, ' ditambah '); // Replace + with "ditambah"
+
+        const utterance = new SpeechSynthesisUtterance(spokenText);
         utterance.lang = 'id-ID';
-        utterance.rate = this.state.mode === 'tunagrahita' ? 0.75 : 0.9;
+        // User requested: "jangan terlalu lambat dan jangan terlalu cepat"
+        // 0.9 is standard. 1.0 is normal. 
+        utterance.rate = 0.9;
         window.speechSynthesis.speak(utterance);
     },
 
-    stopSpeaking() {
+    stopAllAudio() {
         if (window.speechSynthesis) window.speechSynthesis.cancel();
+
+        // Stop all SFX
+        Object.values(this.elements.audio).forEach(audio => {
+            if (audio) {
+                audio.pause();
+                audio.currentTime = 0;
+            }
+        });
+    },
+
+    // Legacy support if needed, or alias
+    stopSpeaking() {
+        this.stopAllAudio();
     },
 
     playAudio(type) {
         if (!this.state.audioEnabled) return;
-        // Strict Tunarungu check: user asked for "No audio dependency", but user might want sound if they have residual hearing.
-        // However, prompt said "Tunarungu (tanpa ketergantungan audio)". I will mute it strictly if I set audioEnabled=false in selectMode.
-        // I did set audioEnabled=false for Tunarungu in selectMode. So this check is covered.
         const audio = this.elements.audio[type];
         if (audio) {
             audio.currentTime = 0;
@@ -354,4 +409,4 @@ const app = {
 
 document.addEventListener('DOMContentLoaded', () => {
     app.init();
-});
+}); s
